@@ -1,0 +1,8 @@
+[package]
+authors = ["Jorge Aparicio <japaricious@gmail.com>"]
+name = "mpd"
+version = "0.1.0"
+
+[dependencies]
+bufstream = "0.1.1"
+clap = "1.5.5"
