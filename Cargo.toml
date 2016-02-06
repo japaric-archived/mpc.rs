@@ -5,4 +5,4 @@ version = "0.1.0"
 
 [dependencies]
 bufstream = "0.1.1"
-clap = "1.5.5"
+clap = "2.0.5"
