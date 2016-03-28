@@ -90,7 +90,7 @@ fn parse_pairs<'a, F>(input: &'a str, mut each_line: F) -> Result<(), Error<'a>>
     where F: FnMut(&'a str, &'a str) -> Result<(), Error<'a>>
 {
     for line in input.lines() {
-        let ref mut parts = line.splitn(2, ": ");
+        let parts = &mut line.splitn(2, ": ");
         let k = try!(parts.next().ok_or(Error::MissingKey { line: line }));
         let v = try!(parts.next().ok_or(Error::MissingValue { line: line }));
 
@@ -157,7 +157,7 @@ impl Time {
     fn parse(input: &str) -> Result<Time, Error> {
         use self::Error::*;
 
-        let ref mut parts = input.splitn(2, ":");
+        let parts = &mut input.splitn(2, ':');
 
         let elapsed = try!(parts.next().ok_or(ParseType {
             ty: "Time",

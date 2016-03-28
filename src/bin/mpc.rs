@@ -1,3 +1,9 @@
+#![deny(warnings)]
+#![cfg_attr(clippy, allow(cyclomatic_complexity))]
+// false positive on `unwrap_or_else(|e| parse::bug(e))` because divergent functions don't implement
+// the `Fn` traits.
+#![cfg_attr(clippy, allow(redundant_closure))]
+
 extern crate clap;
 extern crate mpd;
 
@@ -16,7 +22,7 @@ fn run() -> io::Result<()> {
     // Possible values for boolean arguments
     static VALUES: &'static [&'static str] = &["0", "1", "false", "no", "off", "on", "true", "yes"];
 
-    let ref matches = App::new("mpc")
+    let matches = &App::new("mpc")
                           .arg(Arg::with_name("quiet")
                                    .help("Suppress status message")
                                    .long("quiet")
@@ -72,7 +78,7 @@ fn run() -> io::Result<()> {
                                           .arg(Arg::with_name("level").required(true)))
                           .get_matches();
 
-    let ref mut conn_opt = None;
+    let conn_opt = &mut None;
     let mut quiet = matches.is_present("quiet");
 
     let subcommand = matches.subcommand();
@@ -217,7 +223,7 @@ fn invalid_value(value: &str, usage: &str) -> ! {
 }
 
 /// Connects to MPD if not yet connected, otherwise returns the current connection
-fn connect<'a>(conn_opt: &'a mut Option<Connection>) -> io::Result<&'a mut Connection> {
+fn connect(conn_opt: &mut Option<Connection>) -> io::Result<&mut Connection> {
     Ok(if let Some(ref mut conn) = *conn_opt {
         conn
     } else {

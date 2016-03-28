@@ -205,7 +205,7 @@ pub struct Connection {
 impl Connection {
     /// Sends a command to MPD
     pub fn send(&mut self, cmd: Command) -> io::Result<()> {
-        let ref mut stream = self.stream;
+        let stream = &mut self.stream;
         try!(writeln!(stream, "{}", cmd.str()));
         stream.flush()
     }
@@ -248,7 +248,7 @@ pub struct Version {
 
 impl Version {
     fn parse(input: &str) -> Result<Version, ()> {
-        let ref mut parts = input.splitn(3, ".");
+        let parts = &mut input.splitn(3, '.');
 
         let major = try!(try!(parts.next().ok_or(())).parse().map_err(|_| ()));
         let minor = try!(try!(parts.next().ok_or(())).parse().map_err(|_| ()));
