@@ -152,6 +152,11 @@ pub enum Command<'a> {
         /// If `None`, updates everything
         uri: Option<&'a str>,
     },
+    /// Sets volume level
+    Volume {
+        /// volume level
+        level: u32,
+    },
 }
 
 impl<'a> Command<'a> {
@@ -185,6 +190,7 @@ impl<'a> Command<'a> {
             Stop => "stop",
             Update { uri: None } => "update",
             Update { uri: Some(uri) } => return format!("update \"{}\"", uri).into(),
+            Volume { level } => return format!("setvol {}", level).into(),
         })
     }
 }

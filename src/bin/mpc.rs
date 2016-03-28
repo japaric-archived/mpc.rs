@@ -67,6 +67,9 @@ fn run() -> io::Result<()> {
                                           .arg(Arg::with_name("uri")))
                           .subcommand(SubCommand::with_name("version")
                                           .about("Report version of MPD"))
+                          .subcommand(SubCommand::with_name("volume")
+                                          .about("Set volume")
+                                          .arg(Arg::with_name("level").required(true)))
                           .get_matches();
 
     let ref mut conn_opt = None;
@@ -126,6 +129,12 @@ fn run() -> io::Result<()> {
             // Commands with a single required argument
             ("add", Some(matches)) => {
                 try!(conn.send(Command::Add { uri: matches.value_of("uri").unwrap() }));
+                try!(conn.recv());
+            }
+            ("volume", Some(matches)) => {
+                try!(conn.send(Command::Volume {
+                    level: matches.value_of("level").and_then(|s| s.parse().ok()).unwrap(),
+                }));
                 try!(conn.recv());
             }
             // Commands with a single optional arguments
@@ -258,7 +267,7 @@ fn status(conn: &mut Connection) -> io::Result<()> {
     }
 
     println!("volume: {}   repeat: {}   random: {}   single: {}   consume: {}",
-             status.volume.map(|n| Cow::from(n.to_string())).unwrap_or(Cow::from("n/a")),
+             status.volume.map(|n| Cow::from(format!("{}%", n))).unwrap_or(Cow::from("n/a")),
              onoff(status.repeat),
              onoff(status.random),
              onoff(status.single),
